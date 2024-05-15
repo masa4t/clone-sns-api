@@ -18,7 +18,7 @@ router.put("/update/:userId", upload.single("image"), async (req, res) => {
     const newFileName = `${Date.now()}_${req.file.originalname}`;
     const newPath = path.join(
       __dirname,
-      "../../client/public/images",
+      "../../../client/public/images",
       newFileName
     );
 
