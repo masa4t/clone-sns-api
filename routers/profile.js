@@ -6,7 +6,7 @@ const path = require("path");
 
 const prisma = new PrismaClient();
 const router = express.Router();
-const upload = multer({ dest: "../../../images" });
+const upload = multer({ dest: "public/images" });
 
 router.put("/update/:userId", upload.single("image"), async (req, res) => {
   const { userId } = req.params;
