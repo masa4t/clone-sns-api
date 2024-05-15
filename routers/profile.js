@@ -20,7 +20,6 @@ router.put("/update/:userId", upload.single("image"), async (req, res) => {
     const newPath = path.join(__dirname, "../../../public/images", newFileName);
 
     try {
-      // ディレクトリが存在しない場合は作成
       const dir = path.dirname(newPath);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
