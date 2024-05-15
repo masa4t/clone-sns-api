@@ -6,7 +6,7 @@ const path = require("path");
 
 const prisma = new PrismaClient();
 const router = express.Router();
-const upload = multer({ dest: "public/images" }); // アップロード先のディレクトリを修正
+const upload = multer({ dest: "images" }); // アップロード先のディレクトリを修正
 
 router.put("/update/:userId", upload.single("image"), async (req, res) => {
   const { userId } = req.params;
