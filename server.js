@@ -8,7 +8,7 @@ require("dotenv").config();
 const cors = require("cors");
 
 const PORT = process.env.PORT || 10000;
-app.use(express.static(path.join(__dirname, "public")));
+// app.use(express.static(path.join(__dirname, "public")));
 
 app.use(cors());
 app.use(express.json());
