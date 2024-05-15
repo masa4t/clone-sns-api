@@ -16,11 +16,7 @@ router.put("/update/:userId", upload.single("image"), async (req, res) => {
   if (req.file) {
     const oldPath = req.file.path;
     const newFileName = `${Date.now()}_${req.file.originalname}`;
-    const newPath = path.join(
-      __dirname,
-      "../../../client/public/images",
-      newFileName
-    );
+    const newPath = path.join(__dirname, "../../../public/images", newFileName);
 
     try {
       // ディレクトリが存在しない場合は作成
