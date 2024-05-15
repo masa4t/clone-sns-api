@@ -1,58 +1,79 @@
-const fs = require("fs");
-const express = require("express");
+const isAuthenticated = require("../middlewares/isAuthenticated");
+const router = require("express").Router();
 const { PrismaClient } = require("@prisma/client");
-const multer = require("multer");
-const path = require("path");
 
 const prisma = new PrismaClient();
-const router = express.Router();
-const upload = multer({ dest: "public/images" }); // アップロード先のディレクトリを修正
 
-router.put("/update/:userId", upload.single("image"), async (req, res) => {
-  const { userId } = req.params;
-  const { name, bio } = req.body;
-  let profileImageUrl;
+router.get("/find", isAuthenticated, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
+      include: { profile: true },
+    });
 
-  if (req.file) {
-    const oldPath = req.file.path;
-    const newFileName = `${Date.now()}_${req.file.originalname}`;
-    const newPath = path.join(__dirname, "../../public/images", newFileName); // パスを修正
-
-    try {
-      const dir = path.dirname(newPath);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
-
-      fs.renameSync(oldPath, newPath);
-      profileImageUrl = `/images/${newFileName}`;
-    } catch (error) {
-      console.error("Error moving file:", error);
-      return res.status(500).json({ error: "Error moving file" });
+    if (!user) {
+      return res.status(404).json({ error: "ユーザーが見つかりません。" });
     }
+
+    return res.status(200).json({
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        profile: user.profile,
+      },
+    });
+  } catch (err) {
+    console.error("ユーザーの取得中にエラーが発生しました", err);
+    return res
+      .status(500)
+      .json({ error: "ユーザーの取得中にエラーが発生しました" });
   }
+});
+
+router.get("/profile/:userId", async (req, res) => {
+  const { userId } = req.params;
 
   try {
-    const updatedUser = await prisma.user.update({
-      where: { id: parseInt(userId) },
-      data: {
-        username: name,
-        profile: {
-          update: {
-            bio: bio,
-            profileImageUrl: profileImageUrl || undefined,
+    const profile = await prisma.profile.findUnique({
+      where: { userId: parseInt(userId) },
+      include: {
+        user: {
+          include: {
+            profile: true,
           },
         },
       },
-      include: {
-        profile: true, // プロフィール情報を含める
-      },
     });
-    return res.json(updatedUser);
+    if (!profile) {
+      return res.status(404).json({ error: "Profile not found" });
+    }
+
+    return res.json(profile);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "ユーザー情報の更新に失敗しました。" });
+    console.log(err);
   }
 });
+
+//イメージ更新API
+// router.put("/:userId", async (req, res) => {
+//   const { userId } = req.params;
+//   let { profileImageUrl } = req.body;
+//   console.log("Received profile image URL:", profileImageUrl); // デバッグステートメント
+//   if (!profileImageUrl.startsWith("http")) {
+//     profileImageUrl = "/" + profileImageUrl;
+//   }
+//   try {
+//     const updatedProfile = await prisma.profile.update({
+//       where: { userId: parseInt(userId) },
+//       data: { profileImageUrl },
+//     });
+
+//     res.status(200).json(updatedProfile);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Failed to update profile image URL" });
+//   }
+// });
 
 module.exports = router;

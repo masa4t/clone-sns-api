@@ -6,7 +6,7 @@ const path = require("path");
 
 const prisma = new PrismaClient();
 const router = express.Router();
-const upload = multer({ dest: "public/images" });
+const upload = multer({ dest: "public/images" }); // アップロード先のディレクトリを修正
 
 router.put("/update/:userId", upload.single("image"), async (req, res) => {
   const { userId } = req.params;
@@ -16,7 +16,7 @@ router.put("/update/:userId", upload.single("image"), async (req, res) => {
   if (req.file) {
     const oldPath = req.file.path;
     const newFileName = `${Date.now()}_${req.file.originalname}`;
-    const newPath = path.join(__dirname, "../../../images", newFileName);
+    const newPath = path.join(__dirname, "../../public/images", newFileName); // パスを修正
 
     try {
       const dir = path.dirname(newPath);
@@ -43,6 +43,9 @@ router.put("/update/:userId", upload.single("image"), async (req, res) => {
             profileImageUrl: profileImageUrl || undefined,
           },
         },
+      },
+      include: {
+        profile: true, // プロフィール情報を含める
       },
     });
     return res.json(updatedUser);
