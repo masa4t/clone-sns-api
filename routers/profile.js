@@ -3,7 +3,6 @@ const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const multer = require("multer");
 const path = require("path");
-app.use(express.static(path.join(__dirname, "public")));
 
 const prisma = new PrismaClient();
 const router = express.Router();
