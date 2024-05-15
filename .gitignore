@@ -1,0 +1,15 @@
+# dependencies
+/node_modules
+
+# production
+/build
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local environment files
+.env*
+
+# any other project-specific generated files or directories
