@@ -48,7 +48,7 @@ router.put("/update/:userId", upload.single("image"), async (req, res) => {
     return res.json(updatedUser);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "ユーザー情報の更新に失敗しました" });
+    res.status(500).json({ error: "ユーザー情報の更新に失敗しました。" });
   }
 });
 
