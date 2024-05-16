@@ -45,7 +45,7 @@ router.put("/update/:userId", upload.single("image"), async (req, res) => {
         },
       },
       include: {
-        profile: true, // プロフィール情報を含める
+        profile: true,
       },
     });
     return res.json(updatedUser);
